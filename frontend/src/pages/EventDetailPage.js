@@ -1,23 +1,29 @@
 import { useParams } from 'react-router-dom'
 import EventItem from '../components/EventItem'
 import { useEffect, useState } from 'react'
+import useFetchEvents from '../hooks/use-fetchEvents'
 
 export default function EventDetailPage(){
   const [eventData, setEventData] = useState({})
+  const {isLoading, error, fetchData} = useFetchEvents()
   const params = useParams()
   const eventId = params.id
   useEffect(()=>{
-    const getEventDetails = async (eventId) =>{
-      const response = await fetch(`http://127.0.0.1:8080/events/${eventId}`)
-      if(!response.ok) throw new Error("Unable to fetch details about event")
-      const data = await response.json()
-      const new_eventData = await data.event
-      setEventData(new_eventData)
+    const setEventdetails = data =>{
+      setEventData(data.event)
     }
-    try{getEventDetails(eventId)}
-    catch(err) {console.warn(err.message)}
-  }, [eventId])
+    fetchData(
+      { url: `http://127.0.0.1:8080/events/${eventId}`},
+      setEventdetails
+    )
+  }, [eventId, fetchData])
   return(
-    <EventItem event={eventData}/>
+    <>
+      <div style={{textAlign: "center"}}>
+        {isLoading && <p>Loading...</p>}
+        {error && <p>{error}</p>}
+      </div>
+      <EventItem event={eventData}/>
+    </>
   )
 }
