@@ -1,32 +1,44 @@
-import { useEffect, useState } from "react"
+// import { useEffect, useState } from "react"
+import { useLoaderData } from "react-router-dom";
 import EventsList from "../components/EventsList"
-import useFetchEvents from "../hooks/use-fetchEvents";
+// import useFetchEvents from "../hooks/use-fetchEvents";
 
 export default function EventsPage(){
-  const [eventsList, setEventsList] = useState([])
-  const {isLoading, error, fetchData} = useFetchEvents()
+  const data = useLoaderData()
+  if(data.isError){
+    return <p>{data.message}</p>
+  }
+  // const [eventsList, setEventsList] = useState([])
+  // const {isLoading, error, fetchData} = useFetchEvents()
   
-  useEffect(()=>{
-    const getEventsDetails = data =>{
-      setEventsList(data.events)
-    }
-    fetchData({
-      url: "http://127.0.0.1:8080/events",
-    },getEventsDetails)
-  }, [fetchData])
+  // useEffect(()=>{
+  //   const getEventsDetails = data =>{
+  //     setEventsList(data.events)
+  //   }
+  //   fetchData({
+  //     url: "http://127.0.0.1:8080/events",
+  //   },getEventsDetails)
+  // }, [fetchData])
 
 
   return (
     <>
-      <div style={{textAlign: "center"}}>
+      {/* <div style={{textAlign: "center"}}>
         {isLoading && <p>Loading</p>}
         {error && <p>{error}</p>}
       </div>
-      {!isLoading && <EventsList events={eventsList}/> }
+      {!isLoading && <EventsList events={eventsList}/> } */}
+      <EventsList events={data.events} />
     </>
   )
 }
 
+export async function loader(){
+  const response = await fetch("http://localhost:8080/events")
+  // console.log(response);
+  if(!response.ok) return {isError: true, message: "Unable to fetch data.."}
+  return response
+}
 
 // -------------- OLD CONTENT
 // import { useEffect, useState } from "react"
