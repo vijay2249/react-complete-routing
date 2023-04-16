@@ -1,4 +1,4 @@
-import { json, useLoaderData } from 'react-router-dom'
+import { json, redirect, useRouteLoaderData } from 'react-router-dom'
 import EventItem from '../components/EventItem'
 // import { useEffect, useState } from 'react'
 // import useFetchEvents from '../hooks/use-fetchEvents'
@@ -19,13 +19,12 @@ export default function EventDetailPage(){
   //   )
   // }, [eventId, fetchData])
   
-  const eventData = useLoaderData()
+  const eventData = useRouteLoaderData('event-details')
   if(eventData.isError){
     return(
       <p>{eventData.message}</p>
     )
   }
-  // // console.log(data);
   
   return(
     <>
@@ -40,8 +39,30 @@ export default function EventDetailPage(){
 
 export async function loader({request, params}){
   const id = params.id
-  const response = await fetch(`http://localhost:8080/events/${id}`)
-  // if(!response.ok){ throw json({ message: "Unable to fetch details" }, { status: 500 }) }
-  if(!response.ok) return {isError: true, message: "Unable to fetch data.."}
+  const response = fetch(`http://localhost:8080/events/${id}`)
+    .then(response => response)
+    .catch(err => json({
+      isError: true,
+      message: "Unable to fetch data..."
+    }))
+  // const response = await fetch(`http://localhost:8080/events/${id}`)
+  // await console.log("event details response.body =>", response);
+  // // if(!response.ok){ throw json({ message: "Unable to fetch details" }, { status: 500 }) }
+  // if(!response.ok) return {isError: true, message: "Unable to fetch data.."}
+  return response
+}
+
+export async function action({params, request}){
+  const id = params.id
+  const response = fetch(`http://localhost:8080/events/${id}`,{
+    method: request.method
+  })
+    .then(response => (
+      redirect('/events')
+    ))
+    .catch(err => json({
+      isError: true,
+      message: "Unable to delete event data..."
+    }))
   return response
 }

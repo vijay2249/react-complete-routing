@@ -1,5 +1,5 @@
 // import { useEffect, useState } from "react"
-import { useLoaderData } from "react-router-dom";
+import { json, useLoaderData } from "react-router-dom";
 import EventsList from "../components/EventsList"
 // import useFetchEvents from "../hooks/use-fetchEvents";
 
@@ -35,8 +35,7 @@ export default function EventsPage(){
 
 export async function loader(){
   const response = await fetch("http://localhost:8080/events")
-  // console.log(response);
-  if(!response.ok) return {isError: true, message: "Unable to fetch data.."}
+  if(!response.ok) return json({isError: true, message: "Unable to fetch data..."})
   return response
 }
 
