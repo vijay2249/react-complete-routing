@@ -20,8 +20,8 @@ router.post('/signup', async (req, res, next) => {
     } catch (error) {}
   }
 
-  if (!isValidText(data.password, 6)) {
-    errors.password = 'Invalid password. Must be at least 6 characters long.';
+  if (!isValidText(data.password, 8)) {
+    errors.password = 'Invalid password. Must be at least 8 characters long.';
   }
 
   if (Object.keys(errors).length > 0) {

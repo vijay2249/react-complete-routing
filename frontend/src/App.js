@@ -13,6 +13,7 @@ import NewEventPage from './pages/NewEvent';
 import RootLayout from './pages/Root';
 import { action as manipulateEventAction } from './components/EventForm';
 import NewsletterPage, { action as newsletterAction } from './pages/Newsletter';
+import Authentication, {action as authAction} from './pages/Authentication'
 
 const router = createBrowserRouter([
   {
@@ -25,40 +26,21 @@ const router = createBrowserRouter([
         path: 'events',
         element: <EventsRootLayout />,
         children: [
-          {
-            index: true,
-            element: <EventsPage />,
-            loader: eventsLoader,
-          },
+          { index: true, element: <EventsPage />, loader: eventsLoader, },
           {
             path: ':eventId',
             id: 'event-detail',
             loader: eventDetailLoader,
             children: [
-              {
-                index: true,
-                element: <EventDetailPage />,
-                action: deleteEventAction,
-              },
-              {
-                path: 'edit',
-                element: <EditEventPage />,
-                action: manipulateEventAction,
-              },
+              { index: true, element: <EventDetailPage />, action: deleteEventAction, },
+              { path: 'edit', element: <EditEventPage />, action: manipulateEventAction, },
             ],
           },
-          {
-            path: 'new',
-            element: <NewEventPage />,
-            action: manipulateEventAction,
-          },
+          { path: 'new', element: <NewEventPage />, action: manipulateEventAction, },
         ],
       },
-      {
-        path: 'newsletter',
-        element: <NewsletterPage />,
-        action: newsletterAction,
-      },
+      { path: 'newsletter', element: <NewsletterPage />, action: newsletterAction, },
+      { path: 'auth', element: <Authentication />, action: authAction}
     ],
   },
 ]);
