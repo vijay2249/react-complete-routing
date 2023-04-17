@@ -9,7 +9,8 @@ export default AuthenticationPage;
 
 export async function action({request, params}){
   const searchParams = new URL(request.url).searchParams
-  const mode = searchParams.get('mode') || 'login'
+  const mode = searchParams.get('mode') || 'signup'
+  console.log(mode);
   if(mode !== 'login' && mode !== "signup"){
     throw json({ message: "Unsupported mode"}, {status: 422})
   }
@@ -32,6 +33,10 @@ export async function action({request, params}){
   if(!response.ok){
     throw json({ message: "Unable to perform auth"}, {status: 500})
   }
+
+  const resData = await response.json()
+  const token = resData.token
+  localStorage.setItem('token', token)
 
   return redirect("/")
 }
