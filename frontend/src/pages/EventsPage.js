@@ -1,12 +1,13 @@
 // import { useEffect, useState } from "react"
-import { json, useLoaderData } from "react-router-dom";
+import { Await, defer, json, useLoaderData } from "react-router-dom";
 import EventsList from "../components/EventsList"
+import { Suspense } from "react";
 // import useFetchEvents from "../hooks/use-fetchEvents";
 
 export default function EventsPage(){
-  const data = useLoaderData()
-  if(data.isError){
-    return <p>{data.message}</p>
+  const {events} = useLoaderData()
+  if(events.isError){
+    return <p>{events.message}</p>
   }
   // const [eventsList, setEventsList] = useState([])
   // const {isLoading, error, fetchData} = useFetchEvents()
@@ -22,21 +23,30 @@ export default function EventsPage(){
 
 
   return (
-    <>
+    <Suspense fallback={<p>Loading....</p>}>
       {/* <div style={{textAlign: "center"}}>
         {isLoading && <p>Loading</p>}
         {error && <p>{error}</p>}
       </div>
       {!isLoading && <EventsList events={eventsList}/> } */}
-      <EventsList events={data.events} />
-    </>
+      <Await resolve={events}>
+        {(loadedEvents) => <EventsList events={loadedEvents} />}
+      </Await>
+    </Suspense>
   )
 }
 
-export async function loader(){
+async function loadEvents(){
   const response = await fetch("http://localhost:8080/events")
   if(!response.ok) return json({isError: true, message: "Unable to fetch data..."})
-  return response
+  const data = await response.json()
+  return data.events
+}
+
+export async function loader(){
+  return defer({
+    events: loadEvents()
+  })
 }
 
 // -------------- OLD CONTENT
